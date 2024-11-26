@@ -4,8 +4,18 @@
 - Castillo Soto Jacqueline  
 - Galindo Reyes Daniel Adrian  
 - Isidro Castro Karen Cristina  
-- Zurita Cámara Juan Pablo  
+- Zurita Cámara Juan Pablo
 
+## Installation guide:
+**NOTE:** Ensure that Python 3.6 or higher is installed on your system.
+
+1. Download the necessary files for compilation from the following repository:  
+   [Compiler-Team-06](https://github.com/DanielGalindoDev/Compiler-Team-06).
+2. Place the files in the same folder.
+3. Open a terminal and navigate to the folder containing the files.
+4. Install the required Python library: pip install ply
+5. Command to execute: python compiler.py example.txt
+   
 # Introduction
 
 For this project, we will develop the compiler in a way that allows us to implement and understand each of its phases, gaining insight into how high-level code is transformed into machine-readable code. Throughout the process, we will explore how Python, along with its libraries, can be utilized for the construction of the compiler. Additionally, we will delve into its internal architecture and examine the functionality of each phase in detail.
