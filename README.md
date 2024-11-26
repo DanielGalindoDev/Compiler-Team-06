@@ -1,3 +1,5 @@
+
+
 # Introduction
 
 For this project, we will develop the compiler in a way that allows us to implement and understand each of its phases, gaining insight into how high-level code is transformed into machine-readable code. Throughout the process, we will explore how Python, along with its libraries, can be utilized for the construction of the compiler. Additionally, we will delve into its internal architecture and examine the functionality of each phase in detail.
@@ -98,3 +100,126 @@ A regular expression is a pattern that the regular expression engine attempts to
 ## 2.7 Token
 A token is a predefined sequence of characters that cannot be broken down further. It is like an abstract symbol that represents a unit. A token can have an optional attribute value.
 
+Aquí tienes un resumen del desarrollo en formato Markdown:
+
+# Development
+
+## 3.1 Grammar
+To develop our compiler, we implemented a grammar capable of generating all required structures, including blocks like the `main` function, conditional structures (`if`), and arithmetic operations (`+`, `-`, `*`, `/`). This grammar was designed to handle the syntax and semantics of variable declarations, expressions, and flow control.
+
+### 3.1.1 Expanded Grammar
+
+Program → TYPE MAIN LP RP LB StatementList RB
+StatementList → Statement | Statement StatementList
+Statement → VariableDeclaration EQUAL Expression SEMICOLON
+           | VariableDeclaration SEMICOLON
+           | IF LP BooleanExpression RP LB StatementList RB
+VariableDeclaration → TYPE ID
+Expression → Expression PLUS Factor
+            | Expression MINUS Factor
+            | Factor
+Factor → Factor MULT Term
+        | Factor DIV Term
+        | Term
+Term → LP Expression RP
+     | CONSTANT
+     | ID
+BooleanExpression → Expression RELATION Expression
+
+- **Terminals**: `TYPE`, `MAIN`, `IF`, `LP`, `RP`, `LB`, `RB`, `EQUAL`, `SEMICOLON`, `ID`, `CONSTANT`, `PLUS`, `MINUS`, `MULT`, `DIV`, `RELATION`.
+- **Non-Terminals**: `Program`, `StatementList`, `Statement`, `VariableDeclaration`, `Expression`, `Factor`, `Term`, `BooleanExpression`.
+- **Start Symbol**: `Program`.
+
+---
+
+## 3.2 Lexical Analysis
+The lexical analyzer tokenizes the input source code using regular expressions. Each token is identified by a type and, if applicable, an associated value. This stage simplifies the analysis by breaking down the code into components such as keywords (`int`, `if`, `main`), operators (`+`, `-`, `*`, `/`), identifiers, and constants.
+
+Example:
+```
+int main() {
+    int num = 25;
+    int count = 0;
+
+    if (count == 0) {
+        count = 3;
+    }
+}
+```
+
+**Tokens Generated**:
+```
+TYPE, MAIN, LP, RP, LB, TYPE, ID, EQUAL, CONSTANT, SEMICOLON, ...
+```
+
+---
+
+## 3.3 Syntax Analysis
+The syntax analyzer validates the structure of the token stream using the defined grammar. It generates a parse tree or Abstract Syntax Tree (AST) to represent the hierarchical structure of the code.
+
+### Workflow:
+- **Parsing Algorithm**: Implemented using PLY (`yacc.py`), which supports LALR(1) parsing.
+- **Error Handling**: Reports syntax errors and attempts to recover by identifying invalid token sequences.
+
+---
+
+## 3.4 Semantic Analysis
+Semantic analysis ensures the program's logical consistency and adherence to rules defined in the grammar. It validates:
+1. Variable declarations before use.
+2. Type compatibility in expressions and assignments.
+3. Correct structure of conditional statements and loops.
+
+### Semantic Rules:
+- Variable types must match assigned values.
+- Boolean expressions in conditions must evaluate to a boolean value.
+- Arithmetic operations must involve compatible types.
+
+Example:
+```c
+int num = 25; // Valid
+int count = "hello"; // Invalid: type mismatch
+```
+
+---
+
+## 3.5 Intermediate Code Generation
+The compiler generates Three-Address Code (TAC) as an intermediate representation. This code is easier to optimize and translate into machine code.
+
+Example of TAC for the statement `int c = 3 * b + a;`:
+```
+t1 = 3 * b
+t2 = t1 + a
+c = t2
+```
+
+---
+
+## 3.6 Code Optimization
+The intermediate code is optimized for performance and efficiency. Techniques include:
+- **Constant Folding**: Precomputing constant expressions.
+- **Dead Code Elimination**: Removing unreachable or unused code.
+- **Strength Reduction**: Replacing expensive operations with cheaper alternatives.
+
+Example:
+```c
+if (1 == 1) { count = 3; }
+// Optimized to:
+count = 3;
+```
+
+---
+
+## 3.7 Target Code Generation
+The final stage translates TAC into target code that can be executed on a specific architecture or runtime. In this project, Python bytecode is used as the target representation for simplicity.
+
+Example of Python bytecode:
+```python
+LOAD_CONST 3
+LOAD_NAME b
+BINARY_MULTIPLY
+LOAD_NAME a
+BINARY_ADD
+STORE_NAME c
+```
+
+For more information, download the full documentation [here]().
