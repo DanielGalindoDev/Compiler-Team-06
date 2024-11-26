@@ -50,11 +50,11 @@ class SymbolTable():
     
     def addVariable(self,name,type,line,scope):        
         if name in self.variables[1]:
-            raise NameCollsion(name,line,self.variables[1][name][1])
+            raise NameCollsion(name,self.variables[1][name][1],line)
         
         if scope == 0: 
             if name in self.variables[0]:
-                raise NameCollsion(name,line,self.variables[0][name][1])
+                raise NameCollsion(name,self.variables[0][name][1],line)
         
         self.variables[scope][name] = (type,line)
     
@@ -189,7 +189,7 @@ class Program():
                    
                     
                     file.write(message)
-                    if current_node.data.operation == 'v' or current_node.data.operation == 'dv':
+                    if current_node.data.operation == 'v' or current_node.data.operation == 'dv' or current_node.data.operation == 'p':
                         indent = '\t' * indentation
                         extra = indent + 'print' + '(' + 'f' + '"' + current_node.data.result + ' = ' + '{' + current_node.data.result + '}' + '"' ')' + '\n'
                         file.write(extra)
@@ -234,30 +234,33 @@ def p_C(p):
     if program_instructions.scopeTop == 0: 
         indentation = 1
 
-    depromote = 0
 
     if p[1].type != p[3].type: 
         if p[1].type == 'char' or p[3].type == 'char': 
             raise SemanticError(f"Sematic Error at line {p.lineno(2)}. Incompatible Data Types!")
-        elif p[1].type == 'int':
-            depromote = 1
     
     symbolTable.addVariable(p[1].string,p[1].type,p.lineno(2),program_instructions.scopeTop)
 
     if p[3].value == None: 
-        if depromote:
-            program_instructions.addInstruction('dv',p[3].string,None,p[1].string,indentation)
-        else: 
+        if p[1].type != p[3].type:
+            if p[1].type == 'int': 
+                program_instructions.addInstruction('dv',p[3].string,None,p[1].string,indentation)
+            elif p[1].type == 'float': 
+                program_instructions.addInstruction('p',p[3].string,None,p[1].string,indentation)
+        else:
             program_instructions.addInstruction('v',p[3].string,None,p[1].string,indentation)
 
         program_instructions.freeRegister(p[3].string)
     else: 
         if p[3].type == 'char':
             program_instructions.addInstruction('v',p[3].string,None,p[1].string,indentation)
-        elif depromote: 
-            p[3].value = int(p[3].value)
+        elif p[1].type != p[3].type: 
+            if p[1].type == 'int':
+                p[3].value = int(p[3].value)
+            elif p[1].type == 'float': 
+                p[3].value = float(p[3].value)
             program_instructions.addInstruction('v',str(p[3].value),None,p[1].string,indentation)
-        else:
+        else: 
             program_instructions.addInstruction('v',str(p[3].value),None,p[1].string,indentation)
     
     program_instructions.firstInstruction()
@@ -311,6 +314,7 @@ def p_E(p):
         else: 
             operand2 = str(p[3].value)
         
+
         register = program_instructions.findRegister()
         program_instructions.addInstruction(p[2].string,operand1,operand2,register,indentation)
         program_instructions.firstInstruction()
@@ -319,6 +323,7 @@ def p_E(p):
         type = 'int'
         if p[1].type == 'float' or p[3].type == 'float':
             type = 'float'
+        
         p[0] = Token_Info(register,type)
 
         if p[1].value == None:
@@ -348,7 +353,7 @@ def p_F(p):
         
         if p[2].string == '*': 
             if p[3].type == 'float':
-                p[1].type == 'float'
+                p[1].type = 'float'
             p[1].value = p[1].value * p[3].value
         else: 
             p[1].value = p[1].value / p[3].value
@@ -375,7 +380,7 @@ def p_F(p):
         program_instructions.firstInstruction()
 
         type = 'int'
-        if p[2].string == '\\':
+        if p[2].string == '/':
             type = 'float'
             
         elif p[1].type == 'float' or p[3].type == 'float':
@@ -438,33 +443,35 @@ def p_C3(p):
 
     type = symbolTable.variableExist(p[1].string,program_instructions.scopeTop,p.lineno(1))
 
-
     indentation = 0
     if program_instructions.scopeTop == 0: 
         indentation = 1
 
-    depromote = 0
 
     if type != p[3].type: 
-        if p[1].type == 'char' or p[3] == 'char': 
+        if type == 'char' or p[3] == 'char': 
             raise SemanticError(f"Sematic Error at line {p.lineno(2)}. Incompatible Data Types!")
-        elif p[1].type == 'int':
-            depromote = 1
-
+        
     if p[3].value == None: 
-        if depromote:
-            program_instructions.addInstruction('dv',p[3].string,None,p[1].string,indentation)
-        else: 
-            program_instructions.addInstruction('v',p[3].string,None,p[1].string,indentation)
+        if type == p[3].type: 
+            if type == 'int': 
+                program_instructions.addInstruction('dv',p[3].string,None,p[1].string,indentation)
+            elif type == 'float':
+                program_instructions.addInstruction('dv',p[3].string,None,p[1].string,indentation)
+            else: 
+                program_instructions.addInstruction('v',p[3].string,None,p[1].string,indentation)
 
         program_instructions.freeRegister(p[3].string)
     else:
         if p[3].type == 'char':
             program_instructions.addInstruction('v',p[3].string,None,p[1].string,indentation)
-        elif depromote: 
-            p[3].value = int(p[3].value)
-            program_instructions.addInstruction('dv',str(p[3].value),None,p[1].string,indentation)
-        else:
+        elif type != p[3].type: 
+            if type == 'int':
+                p[3].value = int(p[3].value)
+            elif type == 'float':
+                p[3].value = float(p[3].value)
+            program_instructions.addInstruction('v',str(p[3].value),None,p[1].string,indentation)
+        else: 
             program_instructions.addInstruction('v',str(p[3].value),None,p[1].string,indentation)
     
     program_instructions.firstInstruction()
@@ -645,7 +652,7 @@ def p_I(p):
             
         p[0] = Token_Info(register)
         
-        
+        program_instructions.freeRegister(temp)
         program_instructions.freeRegister(register)
         
 
