@@ -16,7 +16,7 @@
 4. Install the required Python library: pip install ply
 5. Command to execute: python compiler.py example.txt
 
-full documentation [here](https://github.com/DanielGalindoDev/Compiler-Team-06/blob/main/Compiler%20Team06%20.pdf).
+Full documentation [here](https://github.com/DanielGalindoDev/Compiler-Team-06/blob/main/Compiler%20Team06%20.pdf).
 
 # Introduction
 
