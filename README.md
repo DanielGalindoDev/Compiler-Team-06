@@ -1,22 +1,10 @@
-# **National Autonomous University of Mexico**  
-**Faculty of Engineering**  
-**Computer Engineering**  
-
-**Compilers**  
-**Final Project**  
-
-**Students**:
-- 319026678  
-- 319292709  
-- 319157293  
-- 319318261  
-
-### **Group**: 5  
-### **Semester**: 2025-1  
-
-**Mexico City, Mexico**  
-**November 25, 2024**  
-
+# COMPILER
+## Authors:
+- Bolaños Guerrero Julián  
+- Castillo Soto Jacqueline  
+- Galindo Reyes Daniel Adrian  
+- Isidro Castro Karen Cristina  
+- Zurita Cámara Juan Pablo  
 
 # Introduction
 
