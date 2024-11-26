@@ -15,7 +15,9 @@
 3. Open a terminal and navigate to the folder containing the files.
 4. Install the required Python library: pip install ply
 5. Command to execute: python compiler.py example.txt
-   
+
+full documentation [here](https://github.com/DanielGalindoDev/Compiler-Team-06/blob/main/Compiler%20Team06%20.pdf).
+
 # Introduction
 
 For this project, we will develop the compiler in a way that allows us to implement and understand each of its phases, gaining insight into how high-level code is transformed into machine-readable code. Throughout the process, we will explore how Python, along with its libraries, can be utilized for the construction of the compiler. Additionally, we will delve into its internal architecture and examine the functionality of each phase in detail.
@@ -238,4 +240,4 @@ BINARY_ADD
 STORE_NAME c
 ```
 
-For more information, download the full documentation [here]().
+For more information, download the full documentation [here](https://github.com/DanielGalindoDev/Compiler-Team-06/blob/main/Compiler%20Team06%20.pdf).
